@@ -143,7 +143,7 @@ GPU acceleration significantly improves:
 
 - **[Pinak Meher](https://github.com/Pinuk14)** 🔗
 - **[Parth Mhatre](https://github.com/parth-mhatre24)** 🔗
-- **[Niharika Raut](https://github.com/NiharikaRaut)** 🔗
+- **[Niharika Raut](https://github.com/NiharikaRaut-02)** 🔗
 - **[Seon D’silva](https://github.com/Seon-open-sourceylon)** 🔗
 
 ## ✨ Honorable Mention
