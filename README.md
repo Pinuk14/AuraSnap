@@ -28,7 +28,8 @@
   - Supports group photos (same image sorted into multiple lists)
 
 - 🖼️ **Dynamic Watermarking**
-  - Adds customizable watermarks (studio name, event name, guest name)
+  - Live interactive preview UI with opacity and scale sliders
+  - Adds customizable watermarks (studio name, event name, guest name) across 9 grid positions
   - Ensures branding without blocking faces
 
 - 📤 **Automated WhatsApp Delivery**
@@ -38,6 +39,7 @@
 - 🖥️ **User-Friendly Desktop GUI**
   - Built using **CustomTkinter**
   - Supports Dark & Light themes
+  - Dedicated screens for Magic Automation, Live Watermark Editing, and Retrain prompts
   - Designed for non-technical users
 
 - 📷 **Real-Time Face Recognition (Optional)**
@@ -124,7 +126,7 @@ GPU acceleration significantly improves:
 
 - Requires high-quality training images
 - WhatsApp delivery depends on WhatsApp Web session
-- Duplicate image detection requires further optimization
+- Duplicate image detection currently handles duplicate paths, but content-based pHash optimization is planned
 
 ---
 

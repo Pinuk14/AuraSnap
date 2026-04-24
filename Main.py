@@ -9,8 +9,9 @@ import json
 import shutil
 import os
 import cv2  #pip install opencv-python
-
-# Custom FILES
+import threading
+import time
+import winsound
 import Train
 import Sort
 import whatsapp
@@ -34,7 +35,9 @@ def load_basic():
         whatsapp_message=data['Whatsapp']
         global cam
         cam=data['Camera']
-        print(cam)
+        global processing_mode
+        processing_mode = data.get('Processing Mode', 'CPU')
+        print(f"Camera: {cam}, Mode: {processing_mode}")
 
 load_basic()
 
@@ -342,7 +345,6 @@ def open_remove_screen():
 
     # Save button
     ctk.CTkButton(root, text="Save", command=save_events_from_form).pack(pady=10)
-    ctk.CTkButton(root, text='Update', font=("System",15),command=fb.sync_events).pack(padx=10,pady=10)
 
 def open_automate_screen():
     def magic():
@@ -350,28 +352,100 @@ def open_automate_screen():
         events = load_events()
 
         event_info = next((e for e in events if e["Event Name"] == event_name), None)
-        if event_info:
-            file_directory = event_info["File Location"]
-            selected_path = file_loc.get().strip()  # User-selected directory
-
-            final_directory = selected_path if selected_path else file_directory
-
-            print(f"📂 Selected Event Directory: {file_directory}")
-            print(f"📂 User-Selected Directory: {selected_path}")
-            print(f"✅ Using Directory for Sorting: {final_directory}")
-
-            # **Ensure train completes before sorting**
-            Train.train_face_recognition(file_directory, event.get())  # Block execution until training is done
-            cleanup.remove_unknown(EVENTS_JSON)
-            print("✅ Training completed. Proceeding to sorting...")
-            embeded_dir=file_directory+f"/events_models/{event.get()}_face_embeddings.pkl"
-            cleanup.delete_generated_images(entry.get())
-            Sort.sort_face_recognition(embeded_dir,entry.get(),EVENTS_JSON,event.get()) 
-            cleanup.remove_unknown(EVENTS_JSON) # Now call sorting
-            whatsapp.send_whatsapp_messages(BASIC_JSON,EVENTS_JSON,event.get(),entry.get())
-            cleanup.delete_generated_images(entry.get())  # Keep as is
-        else:
+        if not event_info:
             print("⚠️ No event selected or event not found!")
+            status_label.configure(text="⚠️ No event selected!", text_color="red")
+            return
+            
+        file_directory = event_info["File Location"]
+        selected_path = file_loc.get().strip()  # User-selected directory
+        final_directory = selected_path if selected_path else file_directory
+        
+        ok_button.configure(state="disabled")
+        status_label.configure(text="Starting process...", text_color="white")
+        progress_bar.set(0)
+        eta_label.configure(text="ETA: Calculating...")
+        
+        embeded_dir = file_directory + f"/events_models/{event_name}_face_embeddings.pkl"
+        should_train = True
+        
+        # Check if model exists and ask to retrain
+        if os.path.exists(embeded_dir):
+            from tkinter import messagebox
+            should_train = messagebox.askyesno("Retrain Model?", "A trained model for this event already exists.\n\nDo you want to retrain the model?\n(Select 'No' to use the existing model and skip to Sorting)")
+        
+        # Start background thread
+        threading.Thread(target=run_magic_thread, args=(event_name, file_directory, final_directory, should_train), daemon=True).start()
+
+    def run_magic_thread(event_name, file_directory, final_directory, should_train):
+        start_time = [time.time()]
+        
+        def progress_callback(current, total, phase_name):
+            if total > 0:
+                percent = current / total
+                elapsed = time.time() - start_time[0]
+                if current > 0:
+                    eta_seconds = (elapsed / current) * (total - current)
+                    m, s = divmod(int(eta_seconds), 60)
+                    eta_text = f"ETA: {m}m {s}s"
+                else:
+                    eta_text = "ETA: Calculating..."
+            else:
+                percent = 1.0
+                eta_text = "ETA: 0m 0s"
+                
+            def update_ui():
+                status_label.configure(text=f"{phase_name} ({current}/{total})", text_color="cyan")
+                progress_bar.set(percent)
+                eta_label.configure(text=eta_text)
+            
+            root.after(0, update_ui)
+
+        def wrap_phase(phase_func, *args, **kwargs):
+            start_time[0] = time.time()
+            return phase_func(*args, **kwargs)
+
+        try:
+            # Training
+            if should_train:
+                accuracy = wrap_phase(Train.train_face_recognition, file_directory, event_name, progress_callback)
+                if accuracy is not None:
+                    # Show testing accuracy phase in progress bar
+                    progress_callback(100, 100, f"Testing Accuracy: {accuracy:.1f}%")
+                    time.sleep(2)  # Pause to let the user see the accuracy
+                cleanup.remove_unknown(EVENTS_JSON)
+            else:
+                progress_callback(100, 100, "Training Skipped")
+                time.sleep(1)
+            
+            # Sorting
+            embeded_dir = file_directory + f"/events_models/{event_name}_face_embeddings.pkl"
+            if not os.path.exists(embeded_dir):
+                raise Exception("Face embedding model not found. Training might have failed.")
+                
+            cleanup.delete_generated_images(final_directory)
+            wrap_phase(Sort.sort_face_recognition, embeded_dir, final_directory, EVENTS_JSON, event_name, progress_callback=progress_callback)
+            cleanup.remove_unknown(EVENTS_JSON)
+            
+            # WhatsApp
+            wrap_phase(whatsapp.send_whatsapp_messages, BASIC_JSON, EVENTS_JSON, event_name, final_directory, progress_callback)
+            cleanup.delete_generated_images(final_directory)
+            
+            def final_ui():
+                status_label.configure(text="✅ All Tasks Completed Successfully!", text_color="green")
+                progress_bar.set(1.0)
+                eta_label.configure(text="")
+                ok_button.configure(state="normal")
+                winsound.PlaySound("SystemAsterisk", winsound.SND_ALIAS)
+            
+            root.after(0, final_ui)
+            
+        except Exception as e:
+            def error_ui():
+                status_label.configure(text=f"❌ Error: {str(e)}", text_color="red")
+                ok_button.configure(state="normal")
+                winsound.PlaySound("SystemHand", winsound.SND_ALIAS)
+            root.after(0, error_ui)
 
     def browse_file():
         file_path = filedialog.askdirectory()  # Open file picker dialog
@@ -429,7 +503,22 @@ def open_automate_screen():
     
     frame3 = ctk.CTkFrame(root)
     frame3.pack(expand=True)  
-    ctk.CTkButton(frame3, text="Ok", width=60,font=("System", 30), command=magic).pack(side="left", padx=10)
+    ok_button = ctk.CTkButton(frame3, text="Ok", width=60,font=("System", 30), command=magic)
+    ok_button.pack(side="left", padx=10)
+    
+    # Progress UI
+    progress_frame = ctk.CTkFrame(root, fg_color="transparent")
+    progress_frame.pack(expand=True, fill='x', padx=50, pady=10)
+    
+    status_label = ctk.CTkLabel(progress_frame, text="", font=("System", 20))
+    status_label.pack(pady=5)
+    
+    progress_bar = ctk.CTkProgressBar(progress_frame, width=600, height=20, corner_radius=10, progress_color="#1E90FF")
+    progress_bar.set(0)
+    progress_bar.pack(pady=10)
+    
+    eta_label = ctk.CTkLabel(progress_frame, text="", font=("System", 16, "italic"), text_color="gray")
+    eta_label.pack(pady=5)
 
 def open_capture_screen():
     def capture():
@@ -470,6 +559,13 @@ def open_capture_screen():
             camera_index = int(cam.split()[-1])
             print(f"Using camera index: {camera_index}")
             cap = cv2.VideoCapture(camera_index)
+            
+            if not cap.isOpened():
+                print("❌ Failed to open camera.")
+                winsound.PlaySound("SystemHand", winsound.SND_ALIAS)
+                show_popup("Camera Error", "Camera is unavailable or in use by another app.", font1=("System", 16))
+                return
+                
             img_id = 0
 
             while True:
@@ -512,6 +608,8 @@ def open_capture_screen():
         cap = cv2.VideoCapture(selected_index)
         if not cap.isOpened():
             print("Failed to open camera")
+            winsound.PlaySound("SystemHand", winsound.SND_ALIAS)
+            show_popup("Camera Error", "Camera is unavailable.", font1=("System", 16))
             return
         
         while True:
@@ -587,20 +685,28 @@ def open_capture_screen():
 
 def open_update_screen():
     def update():
-        number=new_num.get()
-        new_num.set("")
-        msg=whatsapp_text.get("0.0", "end")
+        msg=whatsapp_text.get("0.0", "end").strip()
         cam=camera.get()
-        camera.set("")
-        whatsapp_text.insert("0.0","")
+        mode=proc_mode.get()
+        delivery = delivery_mode.get()
+        # camera.set("")
+        # whatsapp_text.insert("0.0","")
         # write a code to write the data into the file Basic.json
         with open(BASIC_JSON, 'r') as f:
             data = json.load(f)
-            data['Number'] = number
+            data['Number'] = new_num.get()
             data['Whatsapp'] = msg
             data['Camera']=cam
+            data['Processing Mode'] = mode
+            data['WhatsApp Delivery Method'] = delivery
             with open(BASIC_JSON, 'w') as f:
                 json.dump(data, f, indent=4)
+        
+        # Update global variables
+        global whatsapp_message, processing_mode
+        whatsapp_message = msg
+        processing_mode = mode
+        show_popup("Success", "Settings updated successfully!", font1=("System", 16))
 
     def get_available_cameras():
         cameras = []
@@ -660,9 +766,31 @@ def open_update_screen():
     frame3=ctk.CTkFrame(root)
     frame3.pack(expand=True)
     ctk.CTkLabel(frame3, text="Select Camera:").pack(side='left',padx=10)
-    camera = ctk.StringVar(value=camera_list[0] if camera_list else "No Cameras Found")
+    camera = ctk.StringVar(value=cam if cam in camera_list else (camera_list[0] if camera_list else "No Cameras Found"))
     ctk.CTkComboBox(frame3, values=camera_list, variable=camera).pack(side='left',padx=10)
     ctk.CTkButton(frame3, text="Open Camera", command=open_camera).pack(side='left',padx=10)
+
+    frame_mode = ctk.CTkFrame(root)
+    frame_mode.pack(expand=True)
+    ctk.CTkLabel(frame_mode, text="Processing Mode:", font=("System", 20)).pack(side='left', padx=10)
+    proc_mode = ctk.StringVar(value=processing_mode)
+    ctk.CTkRadioButton(frame_mode, text="CPU", variable=proc_mode, value="CPU").pack(side='left', padx=5)
+    ctk.CTkRadioButton(frame_mode, text="GPU", variable=proc_mode, value="GPU").pack(side='left', padx=5)
+
+    # Load current delivery method for default value
+    try:
+        with open(BASIC_JSON, 'r') as f:
+            basic_data = json.load(f)
+            current_delivery = basic_data.get("WhatsApp Delivery Method", "PyAutoGUI")
+    except:
+        current_delivery = "PyAutoGUI"
+
+    frame_delivery = ctk.CTkFrame(root)
+    frame_delivery.pack(expand=True)
+    ctk.CTkLabel(frame_delivery, text="WhatsApp Delivery:", font=("System", 20)).pack(side='left', padx=10)
+    delivery_mode = ctk.StringVar(value=current_delivery)
+    ctk.CTkRadioButton(frame_delivery, text="PyAutoGUI (Simple)", variable=delivery_mode, value="PyAutoGUI").pack(side='left', padx=5)
+    ctk.CTkRadioButton(frame_delivery, text="Selenium (Robust)", variable=delivery_mode, value="Selenium").pack(side='left', padx=5)
 
     frame4=ctk.CTkFrame(root)
     frame4.pack(expand=True)
@@ -685,43 +813,82 @@ def open_watermark_screen():
     # Initialize variables with existing data or default values
     watermark_text = ctk.StringVar(value=data.get("Whatsapp", ""))
     watermark_image = ctk.StringVar(value=data.get("WaterMark Image", ""))
-    watermark_posi = ctk.StringVar(value=data.get("WaterMark Location", ""))
+    watermark_posi = ctk.StringVar(value=data.get("WaterMark Location", "bottom-right"))
+    watermark_opacity = ctk.DoubleVar(value=float(data.get("WaterMark Opacity", 1.0)))
+    watermark_scale = ctk.DoubleVar(value=float(data.get("WaterMark Scale", 0.2)))
 
     def update_watermark_info():
-        """ Saves watermark details (text, position, and image path) to 'Basic.json' """
+        """ Saves watermark details (text, position, opacity, scale, image path) to 'Basic.json' """
         try:
-            # Update watermark details
             data["Whatsapp"] = watermark_text.get() if watermark_text.get() else data.get("Whatsapp", "")
-            data["WaterMark Location"] = watermark_posi.get() if watermark_posi.get() else data.get("WaterMark Location", "")
-            data["WaterMark Image"] = watermark_image.get() if watermark_image.get() else data.get("WaterMark Image", "")
+            data["WaterMark Location"] = watermark_posi.get()
+            data["WaterMark Image"] = watermark_image.get()
+            data["WaterMark Opacity"] = watermark_opacity.get()
+            data["WaterMark Scale"] = watermark_scale.get()
 
-            # Save updated data back to file
             with open(file_path, "w") as file:
                 json.dump(data, file, indent=4)
-
             print("✅ Watermark details updated successfully in JSON.")
-
+            show_popup("Success", "Watermark settings saved!", font1=("System", 16))
         except Exception as e:
             print(f"❌ Error updating JSON: {e}")
 
     def select_watermark_image():
-        """ Opens file dialog to select image, updates label and stores image path """
         file_path = filedialog.askopenfilename(filetypes=[("Image Files", "*.png;*.jpg;*.jpeg")])
         if file_path:
             watermark_image.set(file_path)
-            update_image_preview(file_path)
-            print(f"✅ Selected watermark image: {file_path}")
+            refresh_preview()
 
-    def update_image_preview(img_path):
-        """ Updates the preview image after selection """
+    def refresh_preview(*args):
+        """ Dynamically composite the watermark on the sample image to show a live preview """
         try:
-            img = Image.open(img_path)
-            img = img.resize((100, 100), Image.Resampling.LANCZOS)  # Resize image to 100x100 px
+            sample_path = "Sample photo.png"
+            wm_path = watermark_image.get()
+            
+            if not os.path.exists(sample_path):
+                img = Image.new("RGB", (800, 600), "grey")
+            else:
+                img = Image.open(sample_path).convert("RGBA")
+            
+            # Thumbnail size bounds to keep preview responsive
+            img.thumbnail((800, 600), Image.Resampling.LANCZOS)
+            
+            if wm_path and os.path.exists(wm_path):
+                watermark = Image.open(wm_path).convert("RGBA")
+                opac = watermark_opacity.get()
+                scale = watermark_scale.get()
+                pos = watermark_posi.get()
+
+                if opac < 1.0:
+                    alpha = watermark.split()[3]
+                    alpha = alpha.point(lambda p: p * opac)
+                    watermark.putalpha(alpha)
+
+                wm_width = int(img.width * scale)
+                wm_height = int((watermark.height / max(watermark.width, 1)) * wm_width)
+                
+                if wm_width > 0 and wm_height > 0:
+                    watermark = watermark.resize((wm_width, wm_height), Image.Resampling.LANCZOS)
+
+                    positions = {
+                        "top-left": (20, 20),
+                        "top-center": ((img.width - wm_width) // 2, 20),
+                        "top-right": (img.width - wm_width - 20, 20),
+                        "center-left": (20, (img.height - wm_height) // 2),
+                        "center": ((img.width - wm_width) // 2, (img.height - wm_height) // 2),
+                        "center-right": (img.width - wm_width - 20, (img.height - wm_height) // 2),
+                        "bottom-left": (20, img.height - wm_height - 20),
+                        "bottom-center": ((img.width - wm_width) // 2, img.height - wm_height - 20),
+                        "bottom-right": (img.width - wm_width - 20, img.height - wm_height - 20)
+                    }
+                    final_pos = positions.get(pos, positions["bottom-right"])
+                    img.paste(watermark, final_pos, watermark)
+
             img_tk = ImageTk.PhotoImage(img)
-            image_label.configure(image=img_tk, text="")  # Remove text when image is displayed
-            image_label.image = img_tk  # Keep reference to avoid garbage collection
+            preview_label.configure(image=img_tk, text="")
+            preview_label.image = img_tk
         except Exception as e:
-            print(f"❌ Error displaying image: {e}")
+            print(f"❌ Error updating preview: {e}")
 
     # Clear existing widgets
     for widget in root.winfo_children():
@@ -731,47 +898,49 @@ def open_watermark_screen():
     title_frame = ctk.CTkFrame(root, width=1400, height=60, fg_color=('#6f6f6f', '#bdbdbd'))
     title_frame.pack_propagate(False)
     title_frame.pack()
-
-    label = ctk.CTkLabel(title_frame, text="Add Watermark", font=("System", 50))
-
+    label = ctk.CTkLabel(title_frame, text="Watermark Settings", font=("System", 50))
     back_btn = ctk.CTkButton(title_frame, text="Go Back", width=50, command=load_main_screen)
     back_btn.pack(side='left', padx=10)
     label.pack(side="left", padx=10, expand=True)
 
-    # Watermark Image Selection
-    frame2 = ctk.CTkFrame(root)
-    frame2.pack(pady=10, expand=True)
-    ctk.CTkLabel(frame2, text="Watermark Image", font=("System", 20)).pack(side='left', padx=10)
-    ctk.CTkButton(frame2, text="Select Image", command=select_watermark_image).pack(side='left', padx=10)
-
-    # Image Preview (Default: Empty)
-    image_label = ctk.CTkLabel(root, text="No Image Selected", width=100, height=100, fg_color="gray")
-    image_label.pack(pady=10)
-
-    # If an existing image is found, display it
-    if watermark_image.get():
-        update_image_preview(watermark_image.get())
-
-    # Watermark Position Selection
-    frame3 = ctk.CTkFrame(root)
-    frame3.pack(pady=10, expand=True)
-    ctk.CTkLabel(frame3, text="Select the position", font=("System", 20)).grid(row=0, column=1, pady=5)
-
+    main_frame = ctk.CTkFrame(root, fg_color="transparent")
+    main_frame.pack(expand=True, fill="both", padx=20, pady=20)
+    
+    # Left controls
+    controls_frame = ctk.CTkFrame(main_frame, width=300)
+    controls_frame.pack(side="left", fill="y", padx=10)
+    
+    ctk.CTkButton(controls_frame, text="Select Watermark Image", command=select_watermark_image).pack(pady=20)
+    
+    ctk.CTkLabel(controls_frame, text="Opacity", font=("System", 16)).pack(pady=(10,0))
+    ctk.CTkSlider(controls_frame, from_=0.1, to=1.0, variable=watermark_opacity, command=refresh_preview).pack(pady=5)
+    
+    ctk.CTkLabel(controls_frame, text="Size (Scale)", font=("System", 16)).pack(pady=(10,0))
+    ctk.CTkSlider(controls_frame, from_=0.05, to=0.8, variable=watermark_scale, command=refresh_preview).pack(pady=5)
+    
+    ctk.CTkLabel(controls_frame, text="Position", font=("System", 16)).pack(pady=(20,5))
+    pos_frame = ctk.CTkFrame(controls_frame, fg_color="transparent")
+    pos_frame.pack(pady=5)
+    
     posi = ["top-left", "top-center", "top-right", "center-left", "center", "center-right", "bottom-left", "bottom-center", "bottom-right"]
-    positions = [[(i, j) for j in range(3)] for i in range(3)]  # 3x3 grid positions
-
     n = 0
-    for i, row in enumerate(positions):
-        for j, pos in enumerate(row):
-            ctk.CTkRadioButton(frame3, text=posi[n], value=posi[n], variable=watermark_posi).grid(row=i+1, column=j, padx=5, pady=5)
+    for i in range(3):
+        for j in range(3):
+            ctk.CTkRadioButton(pos_frame, text=posi[n].split('-')[0].capitalize(), value=posi[n], variable=watermark_posi, command=refresh_preview, width=60).grid(row=i, column=j, padx=5, pady=5)
             n += 1
-
-    # Set the pre-selected radio button for position
-    if watermark_posi.get():
-        watermark_posi.set(data.get("WaterMark Location", ""))
-
-    # Submit Button
-    ctk.CTkButton(root, text="Submit", width=50, command=update_watermark_info).pack(side='bottom', pady=100)
+            
+    ctk.CTkButton(controls_frame, text="Save Settings", font=("System", 20), command=update_watermark_info, fg_color="#1E90FF").pack(side="bottom", pady=20)
+    
+    # Right preview
+    preview_frame = ctk.CTkFrame(main_frame)
+    preview_frame.pack(side="right", expand=True, fill="both", padx=10)
+    
+    ctk.CTkLabel(preview_frame, text="Live Preview", font=("System", 20)).pack(pady=10)
+    preview_label = ctk.CTkLabel(preview_frame, text="Loading preview...", fg_color="black")
+    preview_label.pack(expand=True, fill="both", padx=10, pady=10)
+    
+    # Initial render
+    refresh_preview()
 
 # Function to Load Main Screen
 def load_main_screen():
@@ -795,7 +964,7 @@ def load_main_screen():
                   command=change_theme).pack(side='left', pady=10, padx=10)
 
     # Load Logo Image
-    logo_image = ctk.CTkImage(light_image=Image.open("Final/Logo.png"), size=(80,80))
+    logo_image = ctk.CTkImage(light_image=Image.open("Logo.png"), size=(80,80))
 
     # Add Logo Instead of Text
     logo_label = ctk.CTkLabel(title_frame, image=logo_image, text="")  # Empty text to display only the image
@@ -831,7 +1000,7 @@ root = ctk.CTk()
 root.geometry("1400x800")  # Adjust as needed
 root.title("Aura Snap")
 # Load the Main Screen
-root.iconbitmap("Final 2/Logo.ico")
+root.iconbitmap("Logo.ico")
 load_main_screen()
 
 # Run the App

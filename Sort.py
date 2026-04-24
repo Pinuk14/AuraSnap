@@ -9,13 +9,23 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 # Custom FILES
 import Duplicate
-def sort_face_recognition(EMBEDDING_FILE, DATASET_DIR, EVENTS_JSON_PATH, EVENT_NAME, SIMILARITY_THRESHOLD=0.6):
+def sort_face_recognition(EMBEDDING_FILE, DATASET_DIR, EVENTS_JSON_PATH, EVENT_NAME, SIMILARITY_THRESHOLD=0.6, progress_callback=None):
     """
     Recognizes faces in photos and updates the events.json file while avoiding duplicate images.
     """
+    # Load Processing Mode from Basic.json
+    BASIC_JSON = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Basic.json")
+    try:
+        with open(BASIC_JSON, "r") as f:
+            basic_data = json.load(f)
+            mode = basic_data.get("Processing Mode", "CPU")
+            ctx_id = 0 if mode == "GPU" else -1
+    except:
+        ctx_id = -1
+    
     # Load ArcFace model
     app = FaceAnalysis(name="buffalo_l")
-    app.prepare(ctx_id=0)  # Use GPU (ctx_id=-1 for CPU)
+    app.prepare(ctx_id=ctx_id)
 
     # Load trained embeddings
     with open(EMBEDDING_FILE, "rb") as f:
@@ -36,14 +46,23 @@ def sort_face_recognition(EMBEDDING_FILE, DATASET_DIR, EVENTS_JSON_PATH, EVENT_N
 
     grouped_paths = {}
 
-    for img_name in os.listdir(DATASET_DIR):
+    images_to_process = [img for img in os.listdir(DATASET_DIR) if os.path.isfile(os.path.join(DATASET_DIR, img))]
+    total_images = len(images_to_process)
+    processed_images = 0
+
+    for img_name in images_to_process:
+        if progress_callback:
+            progress_callback(processed_images, total_images, "Sorting Phase")
+
         img_path = os.path.join(DATASET_DIR, img_name)
         img = cv2.imread(img_path)
         if img is None:
+            processed_images += 1
             continue
 
         faces = app.get(img)
         if not faces:
+            processed_images += 1
             continue
 
         for face in faces:
@@ -57,6 +76,11 @@ def sort_face_recognition(EMBEDDING_FILE, DATASET_DIR, EVENTS_JSON_PATH, EVENT_N
             if predicted_phone_number not in grouped_paths:
                 grouped_paths[predicted_phone_number] = set()
             grouped_paths[predicted_phone_number].add(img_path)
+        
+        processed_images += 1
+        
+    if progress_callback:
+        progress_callback(total_images, total_images, "Sorting Phase")
 
     # Convert sets to lists
     grouped_paths = {phone_number: list(paths) for phone_number, paths in grouped_paths.items()}

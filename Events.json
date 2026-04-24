@@ -32,17 +32,11 @@
                 "name": "Rishi",
                 "whatsapp Number": "8767311453",
                 "photos": [
-                    "C:/Users/Sanyu Tuscano/Desktop/Aura Snap/Aura Snap/Photos/WhatsApp Image 2025-03-08 at 05.36.59.jpeg",
-                    "C:/Users/Sanyu Tuscano/Desktop/Aura Snap/Aura Snap/Photos/IMG_20240701_123245725.jpg",
                     "C:/Users/Sanyu Tuscano/Desktop/Aura Snap/Aura Snap/Photos/IMG_20240701_123150859.jpg",
-                    "C:/Users/Sanyu Tuscano/Desktop/Aura Snap/Aura Snap/Photos/WhatsApp Image 2025-03-08 at 05.36.59.jpeg",
                     "C:/Users/Sanyu Tuscano/Desktop/Aura Snap/Aura Snap/Photos/IMG_20240701_123139986.jpg",
                     "C:/Users/Sanyu Tuscano/Desktop/Aura Snap/Aura Snap/Photos/IMG_6411.JPG",
-                    "C:/Users/Sanyu Tuscano/Desktop/Aura Snap/Aura Snap/Photos/IMG_20240701_123150859.jpg",
+                    "C:/Users/Sanyu Tuscano/Desktop/Aura Snap/Aura Snap/Photos/WhatsApp Image 2025-03-08 at 05.36.59.jpeg",
                     "C:/Users/Sanyu Tuscano/Desktop/Aura Snap/Aura Snap/Photos/20240509_114733.jpg",
-                    "C:/Users/Sanyu Tuscano/Desktop/Aura Snap/Aura Snap/Photos/20240509_114733.jpg",
-                    "C:/Users/Sanyu Tuscano/Desktop/Aura Snap/Aura Snap/Photos/IMG_6411.JPG",
-                    "C:/Users/Sanyu Tuscano/Desktop/Aura Snap/Aura Snap/Photos/IMG_20240701_123139986.jpg",
                     "C:/Users/Sanyu Tuscano/Desktop/Aura Snap/Aura Snap/Photos/IMG_20240701_123245725.jpg"
                 ]
             },
@@ -50,6 +44,22 @@
                 "name": "person",
                 "whatsapp Number": "0909090909",
                 "photos": []
+            }
+        ]
+    },
+    {
+        "Event Name": "Test",
+        "Event Date": "24/04/2026",
+        "Event Owner": "Pinak Meher",
+        "Contact Number": "7709160909",
+        "File Location": "B:/AS Events/New folder/Test",
+        "Guests": [
+            {
+                "name": "Pinuk",
+                "whatsapp Number": "7709160909",
+                "photos": [
+                    "B:/Photos/6S9A9578.JPG"
+                ]
             }
         ]
     }

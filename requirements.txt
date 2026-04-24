@@ -1,0 +1,14 @@
+customtkinter
+Pillow==12.1.1
+firebase-admin
+opencv-python==4.13.0.92
+numpy==2.4.3
+insightface
+hdbscan
+scikit-learn==1.8.0
+pywhatkit
+pyautogui
+pyperclip
+onnxruntime
+selenium
+webdriver-manager
