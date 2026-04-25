@@ -1,0 +1,685 @@
+@import "tailwindcss";
+
+/* ================================================================
+   AURASNAP – Global Design System
+   Liquid Glass Aesthetic with Paradiso-inspired Colour Palette
+   ================================================================ */
+
+:root {
+  /* --- Color Palette (Aurora / Liquid Glass) --- */
+  --color-bg-deep:        #0a0612;
+  --color-bg-mid:         #100c1e;
+  --color-accent-1:       #b06ef3;  /* violet aurora */
+  --color-accent-2:       #6ec6f5;  /* sky aurora */
+  --color-accent-3:       #f06292;  /* rose aurora */
+  --color-accent-gold:    #f5c842;  /* warm gold highlight */
+  --color-glass-bg:       rgba(255, 255, 255, 0.06);
+  --color-glass-border:   rgba(255, 255, 255, 0.13);
+  --color-glass-hover:    rgba(255, 255, 255, 0.1);
+  --color-text-primary:   #f0eaff;
+  --color-text-secondary: #a99fc4;
+  --color-text-muted:     #6b6585;
+
+  /* --- Fonts --- */
+  --font-brand:    'Dancing Script', cursive;        /* Logo / brand accent */
+  --font-display:  'Playfair Display', serif;        /* Screen titles (Paradiso-like elegant serif) */
+  --font-elegant:  'Cormorant Garamond', serif;      /* Subtitle / label elegance (Lamour-like) */
+  --font-ui:       'Inter', sans-serif;              /* Body / form / UI copy */
+
+  /* --- Glass Blur --- */
+  --blur-sm:   8px;
+  --blur-md:   16px;
+  --blur-lg:   28px;
+}
+
+/* Light Theme Overrides */
+.light-theme {
+  --color-bg-deep:        #f5f7fa;
+  --color-bg-mid:         #ffffff;
+  --color-text-primary:   #1a1a2e;
+  --color-text-secondary: #4a4a6a;
+  --color-text-muted:     #8e8e93;
+  --color-glass-bg:       rgba(0, 0, 0, 0.03);
+  --color-glass-border:   rgba(0, 0, 0, 0.08);
+  --color-glass-hover:    rgba(0, 0, 0, 0.05);
+  
+  --sidebar-bg:           rgba(240, 242, 245, 0.9);
+  --sidebar-text:         #1a1a2e;
+  --sidebar-icon-bg:      rgba(110, 107, 243, 0.1);
+}
+
+.light-theme input, 
+.light-theme textarea, 
+.light-theme select,
+.light-theme .form-input,
+.light-theme h1,
+.light-theme h2,
+.light-theme h3,
+.light-theme p,
+.light-theme span:not(.badge),
+.light-theme label,
+.light-theme .nav-btn,
+.light-theme .nav-label {
+  color: #1a1a2e !important;
+}
+
+/* Ensure buttons still have readable text if they are glass-based */
+.light-theme .btn-secondary {
+  color: #1a1a2e;
+}
+
+.wm-preview-container {
+  background-image: 
+    linear-gradient(45deg, #eee 25%, transparent 25%), 
+    linear-gradient(-45deg, #eee 25%, transparent 25%), 
+    linear-gradient(45deg, transparent 75%, #eee 75%), 
+    linear-gradient(-45deg, transparent 75%, #eee 75%);
+  background-size: 20px 20px;
+  background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+  background-color: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--color-glass-border);
+}
+
+.light-theme .wm-preview-container {
+  background-color: #f0f0f0;
+  background-image: 
+    linear-gradient(45deg, #e0e0e0 25%, transparent 25%), 
+    linear-gradient(-45deg, #e0e0e0 25%, transparent 25%), 
+    linear-gradient(45deg, transparent 75%, #e0e0e0 75%), 
+    linear-gradient(-45deg, transparent 75%, #e0e0e0 75%);
+}
+
+.light-theme .liquid-button-content {
+  color: #1a1a2e !important;
+}
+
+/* Ensure buttons still have readable text if they are glass-based */
+.light-theme .btn-secondary {
+  color: #1a1a2e;
+}
+.light-theme textarea,
+.light-theme select {
+  color: #1a1a2e !important;
+}
+
+
+/* ============================================================
+   BASE RESET
+   ============================================================ */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--font-ui);
+  background-color: var(--color-bg-deep);
+  color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ============================================================
+   ANIMATED AURORA BACKGROUND
+   ============================================================ */
+.aurora-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.aurora-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.35;
+  animation: float-blob 18s ease-in-out infinite;
+}
+
+.aurora-blob-1 {
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, var(--color-accent-1), transparent 70%);
+  top: -150px; left: -150px;
+  animation-delay: 0s;
+}
+
+.aurora-blob-2 {
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, var(--color-accent-2), transparent 70%);
+  bottom: -100px; right: -100px;
+  animation-delay: -6s;
+}
+
+.aurora-blob-3 {
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, var(--color-accent-3), transparent 70%);
+  top: 40%; left: 40%;
+  animation-delay: -12s;
+}
+
+@keyframes float-blob {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%       { transform: translate(40px, -60px) scale(1.08); }
+  66%       { transform: translate(-30px, 40px) scale(0.95); }
+}
+
+/* ============================================================
+   GLASS CARD
+   ============================================================ */
+.glass-card {
+  background: var(--color-glass-bg);
+  backdrop-filter: blur(var(--blur-md));
+  -webkit-backdrop-filter: blur(var(--blur-md));
+  border: 1px solid var(--color-glass-border);
+  border-radius: 16px;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.glass-card:hover {
+  background: var(--color-glass-hover);
+  box-shadow: 0 8px 32px rgba(176, 110, 243, 0.15);
+}
+
+/* ============================================================
+   SIDEBAR REMAKE
+   ============================================================ */
+.sidebar {
+  width: 280px;
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--color-glass-border);
+  display: flex;
+  flex-direction: column;
+  padding: 32px 20px;
+  position: relative;
+  height: 100vh;
+  backdrop-filter: blur(var(--blur-md));
+  z-index: 100;
+  color: var(--sidebar-text);
+  transition: all 0.3s ease;
+}
+
+.sidebar-logo {
+  font-family: var(--font-brand);
+  font-size: 2.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--color-accent-1), var(--color-accent-2), var(--color-accent-3));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.sidebar-tagline {
+  font-family: var(--font-elegant);
+  font-size: 0.7rem;
+  opacity: 0.6;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 32px;
+}
+
+.sidebar-divider {
+  height: 1px;
+  background: var(--color-glass-border);
+  margin: 16px 0;
+  opacity: 0.5;
+}
+
+.nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  color: inherit;
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+  position: relative;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-bottom: 6px;
+}
+
+.nav-btn:hover {
+  background: var(--color-glass-hover);
+  padding-left: 20px;
+}
+
+.nav-btn.active {
+  background: var(--color-glass-bg);
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.nav-icon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--sidebar-icon-bg);
+  border-radius: 8px;
+  font-size: 1.1rem;
+}
+
+.sidebar-bottom {
+  margin-top: auto;
+}
+
+.phone-badge {
+  background: var(--color-glass-bg);
+  border: 1px solid var(--color-glass-border);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+/* ============================================================
+   MAIN CONTENT
+   ============================================================ */
+.main-content {
+  flex: 1;
+  padding: 40px;
+  overflow-y: auto;
+  scrollbar-color: rgba(176,110,243,0.3) transparent;
+  display: flex;
+  flex-direction: column;
+}
+
+.content-inner {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.main-content::-webkit-scrollbar { width: 4px; }
+.main-content::-webkit-scrollbar-thumb {
+  background: rgba(176,110,243,0.4);
+  border-radius: 4px;
+}
+
+.page-title {
+  font-family: var(--font-brand);
+  font-size: 3.2rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: 4px;
+}
+
+.page-subtitle {
+  font-family: var(--font-elegant);
+  font-style: italic;
+  font-size: 1rem;
+  color: var(--color-text-muted);
+  margin-bottom: 32px;
+  letter-spacing: 0.03em;
+}
+
+/* ============================================================
+   FORM ELEMENTS
+   ============================================================ */
+.form-label {
+  font-family: var(--font-elegant);
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 6px;
+  display: block;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.form-input {
+  width: 100%;
+  padding: 11px 16px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--color-glass-border);
+  border-radius: 10px;
+  color: var(--color-text-primary);
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-input:focus {
+  border-color: rgba(176,110,243,0.5);
+  box-shadow: 0 0 0 3px rgba(176,110,243,0.1);
+}
+
+.form-input::placeholder { color: var(--color-text-muted); }
+
+.form-textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.form-select {
+  appearance: none;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='rgba(176,110,243,0.6)'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+  padding-right: 40px;
+}
+
+.form-select option {
+  background-color: var(--color-bg-mid);
+  color: var(--color-text-primary);
+  padding: 10px;
+}
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 24px;
+  background: linear-gradient(135deg, var(--color-accent-1), #7c4ef5);
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 20px rgba(176,110,243,0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(176,110,243,0.45);
+}
+
+.btn-primary:active { transform: translateY(0); }
+.btn-primary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  background: var(--color-glass-bg);
+  border: 1px solid var(--color-glass-border);
+  border-radius: 10px;
+  color: var(--color-text-secondary);
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background: var(--color-glass-hover);
+  color: var(--color-text-primary);
+}
+
+.btn-danger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  background: rgba(240, 98, 146, 0.15);
+  border: 1px solid rgba(240, 98, 146, 0.3);
+  border-radius: 8px;
+  color: #f06292;
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-danger:hover {
+  background: rgba(240, 98, 146, 0.25);
+  box-shadow: 0 4px 16px rgba(240, 98, 146, 0.2);
+}
+
+/* ============================================================
+   FORM GRID
+   ============================================================ */
+.form-group { margin-bottom: 20px; }
+
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+/* ============================================================
+   PROGRESS BAR
+   ============================================================ */
+.progress-track {
+  width: 100%;
+  height: 8px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--color-accent-1), var(--color-accent-2));
+  transition: width 0.4s ease;
+  box-shadow: 0 0 12px rgba(110,198,245,0.5);
+}
+
+/* ============================================================
+   STATUS BADGES
+   ============================================================ */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  font-family: var(--font-ui);
+}
+
+.badge-success {
+  background: rgba(78,205,112,0.15);
+  color: #4ecd70;
+  border: 1px solid rgba(78,205,112,0.3);
+}
+
+.badge-error {
+  background: rgba(240,98,146,0.15);
+  color: #f06292;
+  border: 1px solid rgba(240,98,146,0.3);
+}
+
+.badge-info {
+  background: rgba(110,198,245,0.12);
+  color: #6ec6f5;
+  border: 1px solid rgba(110,198,245,0.3);
+}
+
+/* ============================================================
+   STAT CARDS (Dashboard)
+   ============================================================ */
+.stat-card {
+  padding: 24px 20px;
+  border-radius: 16px;
+  background: var(--color-glass-bg);
+  backdrop-filter: blur(var(--blur-md));
+  border: 1px solid var(--color-glass-border);
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(176,110,243,0.15);
+}
+
+.stat-card-number {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--color-accent-1), var(--color-accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.stat-card-label {
+  font-family: var(--font-elegant);
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+/* ============================================================
+   TABLE
+   ============================================================ */
+.glass-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.glass-table th {
+  font-family: var(--font-elegant);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-text-muted);
+  padding: 10px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--color-glass-border);
+}
+
+.glass-table td {
+  padding: 12px 14px;
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  vertical-align: middle;
+}
+
+.glass-table tr:hover td {
+  background: rgba(255,255,255,0.03);
+  color: var(--color-text-primary);
+}
+
+/* ============================================================
+   RADIO GRID (Watermark position picker)
+   ============================================================ */
+.radio-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.radio-grid-btn {
+  padding: 8px;
+  border-radius: 8px;
+  background: var(--color-glass-bg);
+  border: 1px solid var(--color-glass-border);
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  font-family: var(--font-ui);
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.radio-grid-btn:hover,
+.radio-grid-btn.selected {
+  background: linear-gradient(135deg, rgba(176,110,243,0.2), rgba(110,198,245,0.1));
+  border-color: rgba(176,110,243,0.4);
+  color: var(--color-text-primary);
+}
+
+/* ============================================================
+   SLIDER
+   ============================================================ */
+input[type="range"] {
+  width: 100%;
+  appearance: none;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.1);
+  outline: none;
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--color-accent-1);
+  box-shadow: 0 0 8px rgba(176,110,243,0.6);
+  cursor: pointer;
+}
+
+/* ============================================================
+   CAMERA VIEW
+   ============================================================ */
+.camera-feed {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  max-height: 500px;
+  border-radius: 12px;
+  object-fit: contain;
+  border: 1px solid var(--color-glass-border);
+  background: #000;
+}
+
+/* ============================================================
+   SCROLLBAR
+   ============================================================ */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(176,110,243,0.3);
+  border-radius: 4px;
+}
+
+/* Forced Light Theme Readability Fixes */
+.light-theme input, 
+.light-theme textarea, 
+.light-theme select,
+.light-theme .form-input,
+.light-theme .form-select,
+.light-theme .form-input::placeholder {
+  color: #1a1a2e !important;
+  -webkit-text-fill-color: #1a1a2e !important;
+}
+
+.light-theme .form-input {
+  background-color: rgba(0, 0, 0, 0.05) !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}

@@ -1,53 +1,5 @@
 [
     {
-        "Event Name": "mybirthday",
-        "Event Date": "08/03/2025",
-        "Event Owner": "rishi",
-        "Contact Number": "8767311453",
-        "File Location": "C:/Users/Sanyu Tuscano/Desktop/Aura Snap/mybirthday",
-        "Guests": [
-            {
-                "name": "Nash",
-                "whatsapp Number": "8625833072",
-                "photos": []
-            }
-        ]
-    },
-    {
-        "Event Name": "Birthday",
-        "Event Date": "03/04/2025",
-        "Event Owner": "Maric",
-        "Contact Number": "09876543",
-        "File Location": "ANDROID_CREATED",
-        "Guests": []
-    },
-    {
-        "Event Name": "Hackathon1",
-        "Event Date": "08/03/2025",
-        "Event Owner": "Rishi",
-        "Contact Number": "0909090909",
-        "File Location": "C:/Users/Sanyu Tuscano/Desktop/Aura Snap/Hackathon1",
-        "Guests": [
-            {
-                "name": "Rishi",
-                "whatsapp Number": "8767311453",
-                "photos": [
-                    "C:/Users/Sanyu Tuscano/Desktop/Aura Snap/Aura Snap/Photos/IMG_20240701_123150859.jpg",
-                    "C:/Users/Sanyu Tuscano/Desktop/Aura Snap/Aura Snap/Photos/IMG_20240701_123139986.jpg",
-                    "C:/Users/Sanyu Tuscano/Desktop/Aura Snap/Aura Snap/Photos/IMG_6411.JPG",
-                    "C:/Users/Sanyu Tuscano/Desktop/Aura Snap/Aura Snap/Photos/WhatsApp Image 2025-03-08 at 05.36.59.jpeg",
-                    "C:/Users/Sanyu Tuscano/Desktop/Aura Snap/Aura Snap/Photos/20240509_114733.jpg",
-                    "C:/Users/Sanyu Tuscano/Desktop/Aura Snap/Aura Snap/Photos/IMG_20240701_123245725.jpg"
-                ]
-            },
-            {
-                "name": "person",
-                "whatsapp Number": "0909090909",
-                "photos": []
-            }
-        ]
-    },
-    {
         "Event Name": "Test",
         "Event Date": "24/04/2026",
         "Event Owner": "Pinak Meher",
@@ -61,6 +13,7 @@
                     "B:/Photos/6S9A9578.JPG"
                 ]
             }
-        ]
+        ],
+        "Accuracy": 100.0
     }
 ]

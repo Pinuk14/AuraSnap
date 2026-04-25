@@ -1,21 +1,31 @@
 @echo off
-echo ===================================
-echo        Starting AuraSnap...
-echo ===================================
+title AuraSnap v2.0 Launcher
+color 35
+
+echo.
+echo  ___  ___  ___  _  _  ___ 
+echo ^| _ ^^| | _^^| ^|  __ ^^| ^^^| / / ^|
+echo ^|    ^| ^|   ^| ^^^| _ ^^|^^^|^|   ^<  ^|
+echo ^|_^^|_^^|_^^|___^^| ^|___/ /_/\^_\^|
+echo   AuraSnap v2.0 -- Tauri+React
 echo.
 
-:: Check if the virtual environment exists
-if not exist "venv\Scripts\activate.bat" (
-    echo [ERROR] Virtual environment not found. Please ensure 'venv' exists.
-    pause
-    exit /b 1
-)
+:: Activate venv
+call "%~dp0venv\Scripts\activate.bat"
 
-:: Activate the virtual environment
-call venv\Scripts\activate
+:: Start Python API in background
+echo [1/2] Starting Python API Backend...
+start "AuraSnap-API" /MIN python "%~dp0api.py"
+timeout /t 2 /nobreak > nul
 
-:: Run the main application
-python Main.py
+:: Start Vite frontend
+echo [2/2] Starting React Frontend (Vite)...
+cd /d "%~dp0aurasnap-ui"
+start "AuraSnap-UI" /MIN npm run dev
 
-:: Pause so the user can see any error messages if it crashes
-pause
+echo.
+echo  AuraSnap is running!
+echo  Open: http://localhost:5173
+echo.
+timeout /t 2 /nobreak > nul
+start http://localhost:5173

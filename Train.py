@@ -2,6 +2,7 @@ import os
 import cv2
 import numpy as np
 import pickle
+import json
 import insightface
 from insightface.app import FaceAnalysis
 import hdbscan
