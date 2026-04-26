@@ -1,6 +1,33 @@
+# Environments
 venv/
+env/
+.env
+.venv
+ENV/
+
+# Python artifacts
 __pycache__/
 *.py[cod]
 *$py.class
+*.so
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Data and logs
+*.log
 PyWhatKit_DB.txt
+temp.txt
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project Specific
 Modular-UIcomponents/*
