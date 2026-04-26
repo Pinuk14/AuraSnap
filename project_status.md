@@ -1,33 +1,47 @@
-# AuraSnap Project Status
+# AuraSnap Project Status (v2.0)
 
-## 📊 Overall Completion: 80%
+## 📊 Overall Completion: 95%
+
+AuraSnap has successfully migrated from a legacy CustomTkinter app to a modern **React + Python Sidecar** architecture featuring a premium **Liquid Glass** design system.
+
+---
 
 ### 🏗️ Component Breakdown:
-- **GUI (CustomTkinter):** 95% (Feature-complete, Live Watermark Preview, Model Retrain prompts)
-- **Face Recognition Training:** 95% (InsightFace + HDBSCAN, Accuracy Tracking, Retrain Skip)
-- **Photo Sorting Logic:** 80% (Functional matching, needs multi-threading for large batches)
-- **WhatsApp Automation:** 70% (Robust Selenium integration + PyAutoGUI fallback with connection checks)
-- **Watermarking System:** 100% (Dynamic positioning, opacity, scaling, live preview)
-- **Duplicate Detection:** 50% (Path-based deduplication hardened; content-based pHash missing)
-- **Cleanup Utilities:** 95% (Effective removal of temporary files)
+- **Frontend (React v18):** 98% (Premium Liquid Glass UI, Framer Motion animations, SSE progress streaming, polished Light/Dark modes).
+- **Backend Architecture (FastAPI):** 100% (Modular structure with `core/`, `data/`, and `assets/` separation).
+- **Face Recognition Training:** 100% (InsightFace + HDBSCAN, Accuracy Tracking, Retrain Skip, Selective Task execution).
+- **Photo Sorting Logic:** 95% (Hardened path-based deduplication, case-insensitive matching).
+- **WhatsApp Automation:** 85% (Selenium + PyAutoGUI fallback, needs further stress testing for large contact lists).
+- **Watermarking System:** 100% (Dynamic positioning, opacity, scaling, live checkerboard preview).
+- **Cleanup Utilities:** 100% (Automatic removal of generated/temporary files).
+
+---
+
+## ✅ Recent Milestones (v2.0)
+- [x] **Architecture Overhaul**: Migrated to Vite + React frontend with a FastAPI backend.
+- [x] **Modular Structure**: Organized code into `backend/core`, `backend/data`, and `backend/assets`.
+- [x] **Liquid Glass UI**: Implemented high-fidelity glassmorphism with dynamic shading and filters.
+- [x] **Native Integration**: Replaced browser folder pickers with native Windows dialogs via Tkinter bridge.
+- [x] **Progress Streaming**: Real-time "Magic" progress using Server-Sent Events (SSE) that persists across navigation.
+- [x] **Theme Polishing**: Fully reactive Light and Dark modes with specialized overrides for input readability.
+- [x] **Camera Restoration**: Fixed live feed visibility and implemented dynamic 16:9 aspect ratio.
 
 ---
 
 ## 🐞 Bugs & Needed Fixes
 
-### 🔴 Critical Fixes:
-*(No critical fixes pending. Excellent!)*
-
-
 ### 🟡 Improvements & Optimization:
-1. **Duplicate Detection:** Implement Perceptual Hashing (pHash) to detect visually identical images, as requested in the README. Currently, it only robustly checks if normalized file paths are unique.
-2. **Manual Tagging:** Add a "Manual Correction" screen in the GUI to allow users to tag "Unknown" faces or correct misidentifications.
-3. **Camera Selection:** Improve the camera index detection to be more reliable on systems with multiple virtual or physical cameras.
+1. **Duplicate Detection:** Implement Perceptual Hashing (pHash) for content-based deduplication (to catch identical photos with different names).
+2. **Manual Tagging:** Add a UI for manual corrections to "Unknown" clusters directly in the "Manage Events" page.
+3. **Packaging**: Finalize the Tauri wrapper for single-binary distribution.
 
 ---
 
 ## 🗓️ Future Roadmap (Next Steps)
-- Migrate UI to **Tauri + React** for an ultra-fast, standalone desktop app supporting advanced Liquid Glass/WebGL shading while using Python as a background sidecar.
-- Centralize shared logic into a `utils/` or `core/` package.
-- Replace `pyautogui` logic with a completely headless robust automation (like Playwright).
-- Implement pHash for image deduplication.
+- [ ] Implement pHash for image deduplication.
+- [ ] Add Playwright-based headless WhatsApp delivery for even higher reliability.
+- [ ] Build a standalone installer using Tauri or Electron.
+- [ ] Add support for multiple camera selection in Settings.
+
+---
+*Updated: 2026-04-25*

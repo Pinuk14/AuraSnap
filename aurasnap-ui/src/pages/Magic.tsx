@@ -1,8 +1,8 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { apiFetch, selectFolder } from '../api';
-import type { Event } from '../api';
+import { apiFetch, selectFolder } from '../services/api';
+import type { Event } from '../services/api';
 import toast from 'react-hot-toast';
 import LiquidButton from '../components/LiquidButton';
 import magicService from '../magicService';

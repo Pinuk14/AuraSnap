@@ -1,69 +1,60 @@
 # 📸 AuraSnap
 
-![Python](https://img.shields.io/badge/Python-3.8%2B-blue?logo=python)
+![React](https://img.shields.io/badge/React-v18-blue?logo=react)
+![FastAPI](https://img.shields.io/badge/FastAPI-v0.100-green?logo=fastapi)
+![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python)
 ![OpenCV](https://img.shields.io/badge/OpenCV-Computer%20Vision-green?logo=opencv)
 ![PyTorch](https://img.shields.io/badge/PyTorch-GPU%20Supported-red?logo=pytorch)
 ![TensorFlow](https://img.shields.io/badge/TensorFlow-GPU%20Supported-orange?logo=tensorflow)
 ![CUDA](https://img.shields.io/badge/CUDA-Enabled-brightgreen?logo=nvidia)
 ![Platform](https://img.shields.io/badge/Platform-Windows%2011-blue)
-![GUI](https://img.shields.io/badge/GUI-CustomTkinter-purple)
 ![Status](https://img.shields.io/badge/Project-Academic-success)
 
 ---
 
 ## 📖 Overview
 
-**AuraSnap** is an AI-powered, face recognition–based photo management system built for **event photography studios**. It automates the entire post-event workflow—**face detection, photo sorting, watermarking, and WhatsApp delivery**—reducing manual effort and turnaround time.
+**AuraSnap** is a high-performance, AI-powered face recognition system designed for event photography. It automates the complex workflow of **face detection, intelligent sorting, dynamic watermarking, and automated WhatsApp delivery**. 
+
+Introduces a state-of-the-art **Liquid Glass** interface built on a **React + Python Sidecar** architecture, offering a premium, fluid experience for professional studios.
 
 ---
 
-## 🚀 Key Features
+## ✨ Key Features
 
-- 🔍 **Automatic Face Recognition**
-  - Identifies individuals in bulk event photos
-  - Uses deep learning–based face embeddings (ArcFace / FaceNet)
+- 🧪 **Advanced Face Recognition**
+  - Uses **InsightFace (ArcFace)** and **HDBSCAN** for highly accurate face clustering.
+  - Automatically identifies guests across thousands of photos.
+  
+- 💎 **Liquid Glass UI**
+  - Stunning modern aesthetic with glassmorphism, blur effects, and fluid animations.
+  - Interactive "Magic" dashboard with real-time SSE progress streaming.
+  - Fully responsive Light/Dark modes.
 
-- 🗂️ **Smart Photo Sorting**
-  - Automatically organizes images into person-specific lists
-  - Supports group photos (same image sorted into multiple lists)
+- 🗂️ **Modular Automation**
+  - Selective execution: Choose to Train, Sort, or Send individually or all at once.
+  - Smart Retraining: Skips training if a model already exists for an event.
 
-- 🖼️ **Dynamic Watermarking**
-  - Live interactive preview UI with opacity and scale sliders
-  - Adds customizable watermarks (studio name, event name, guest name) across 9 grid positions
-  - Ensures branding without blocking faces
+- 🖼️ **Real-Time Watermarking**
+  - Live preview with a checkerboard background for transparency visibility.
+  - Full control over opacity, scale, and 9-grid positioning.
 
 - 📤 **Automated WhatsApp Delivery**
-  - Sends photos directly to guests via WhatsApp using PyWhatKit
-  - Contact numbers are linked during dataset training
-
-- 🖥️ **User-Friendly Desktop GUI**
-  - Built using **CustomTkinter**
-  - Supports Dark & Light themes
-  - Dedicated screens for Magic Automation, Live Watermark Editing, and Retrain prompts
-  - Designed for non-technical users
-
-- 📷 **Real-Time Face Recognition (Optional)**
-  - Webcam-based recognition
-  - Displays known guest details instantly
-
-- 🌐 **Offline First**
-  - Fully functional offline (except WhatsApp delivery)
-  - Suitable for on-site event usage
+  - Robust delivery via Selenium or PyAutoGUI fallback.
+  - Intelligent deduplication to ensure guests never receive the same photo twice.
 
 ---
 
 ## 🧠 Tech Stack
 
-| Category | Technologies |
-|--------|-------------|
-| Language | Python 3.8+ |
-| GUI | CustomTkinter |
-| Computer Vision | OpenCV |
-| Deep Learning | TensorFlow / PyTorch |
-| Face Recognition | ArcFace / FaceNet |
-| Image Processing | PIL (Pillow) |
-| Automation | PyWhatKit |
-| Optimization | Nvidia Omniverse |
+| Layer | Technologies |
+| :--- | :--- |
+| **Frontend** | React v18, Framer Motion, TailwindCSS, Vite |
+| **Backend API** | FastAPI, Uvicorn, Python 3.10+ |
+| **AI/ML** | InsightFace, HDBSCAN, OpenCV, NumPy |
+| **Automation** | Selenium, PyAutoGUI, PyWhatKit |
+| **Image Processing** | Pillow (PIL) |
+| **Optimization** | Nvidia Omniverse |
 
 ---
 
@@ -86,33 +77,6 @@ GPU acceleration significantly improves:
 
 ---
 
-## 🏗️ System Architecture (High Level)
-
-1. Input event images  
-2. Face detection using OpenCV  
-3. Face embedding using deep learning models  
-4. Face matching via cosine similarity  
-5. Photo sorting into JSON-based lists  
-6. Watermarking using PIL  
-7. WhatsApp delivery using PyWhatKit  
-
----
-
-## 🖥️ System Requirements
-
-### Hardware
-- Intel i5 (12th Gen) or higher  
-- 8 GB RAM (16 GB recommended)  
-- NVIDIA GPU (RTX 3060 or higher recommended)  
-- 500 MB free storage  
-
-### Software
-- Windows 11  
-- Python 3.8+  
-- WhatsApp Web (logged in)
-
----
-
 ## 🧪 Performance Highlights
 
 - ✅ >95% recognition accuracy for trained faces
@@ -130,35 +94,28 @@ GPU acceleration significantly improves:
 
 ---
 
-## 🔮 Future Enhancements
-
-- ☁️ Cloud storage integration
-- 📱 Mobile application version
-- 🔁 Continuous face re-training across events
-- 🌍 Multi-language UI support
-- 🎨 Advanced watermark templates
-- 📊 Self-learning guest face database
+## ⚠️ Requirements
+- **OS**: Windows 10/11
+- **Hardware**: 8GB RAM minimum (NVIDIA GPU recommended for faster face recognition)
+- **Browser**: Chrome/Edge (for WhatsApp Selenium integration)
 
 ---
 
-## 👨‍💻 Core Team Contributions
+## 👨‍💻 Core Team
 
 - **[Pinak Meher](https://github.com/Pinuk14)** 🔗
 - **[Parth Mhatre](https://github.com/parth-mhatre24)** 🔗
 - **[Niharika Raut](https://github.com/NiharikaRaut-02)** 🔗
 - **[Seon D’silva](https://github.com/Seon-open-sourceylon)** 🔗
 
-## ✨ Honorable Mention
-
-- **[Maric Brass](https://github.com/Maricbrass)** 🔗
-- **[Nash Tuscano](https://github.com/23Nash)** 🔗
-- **[Rishi Vartak](https://github.com/RishiVartak6)** 🔗
+### ✨ Honarable Mentions
+- **[Nash Tuscano](https://github.com/23Nash)**
+- **[Maric Brass](https://github.com/Maricbrass)**
+- **[Rishi Vartak](https://github.com/RishiVartak6)**
 
 ---
 
 ## 🏫 Academic Info
-
-- **Institution:** Vidyavardhini’s College of Engineering & Technology  
-- **Department:** Computer Engineering  
-- **Semester:** Semester IV  
-- **Academic Year:** 2024–25  
+- **Institution**: Vidyavardhini’s College of Engineering & Technology
+- **Department**: Computer Engineering
+- **Academic Year**: 2024–25

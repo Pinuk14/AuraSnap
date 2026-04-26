@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { apiFetch, selectFolder } from '../api';
+import { apiFetch, selectFolder } from '../services/api';
 import toast from 'react-hot-toast';
 import LiquidInput from '../components/LiquidInput';
 import LiquidButton from '../components/LiquidButton';

@@ -8,8 +8,8 @@ import Capture from './pages/Capture';
 import Magic from './pages/Magic';
 import Watermark from './pages/Watermark';
 import SettingsPage from './pages/SettingsPage';
-import { apiFetch } from './api';
-import type { Settings } from './api';
+import { apiFetch } from './services/api';
+import type { Settings } from './services/api';
 import GlassFilter from './components/GlassFilter';
 import LiquidToggle from './components/LiquidToggle';
 

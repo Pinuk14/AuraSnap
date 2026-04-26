@@ -25,7 +25,7 @@ def start_aurasnap():
 
     # Check if we are already running in the venv
     if sys.executable != python_exe and os.path.exists(python_exe):
-        print(f"🔄 Re-launching script inside virtual environment...")
+        print(f"Re-launching script inside virtual environment...")
         # Add venv/Scripts to PATH so sub-commands find the right tools
         os.environ["PATH"] = venv_scripts + path_sep + os.environ.get("PATH", "")
         os.environ["VIRTUAL_ENV"] = venv_path
@@ -37,19 +37,19 @@ def start_aurasnap():
             pass  # Ctrl+C from inner process is expected, suppress traceback
         return
 
-    print("\n🚀 Starting AuraSnap v2.0 (Environment Activated)...")
+    print("\nStarting AuraSnap v2.0 (Environment Activated)...")
 
     # 1. Start Python Backend (FastAPI)
-    print("📡 Launching Backend API (api.py)...")
+    print("Launching Backend API (api.py)...")
     # Using the current sys.executable since we re-launched in venv
     backend_process = subprocess.Popen(
-        [sys.executable, os.path.join(root_dir, "api.py")],
-        cwd=root_dir,
+        [sys.executable, os.path.join(root_dir, "backend", "api.py")],
+        cwd=os.path.join(root_dir, "backend"),
         env=os.environ.copy()
     )
 
     # 2. Start Frontend (Vite)
-    print("✨ Launching Frontend (npm run dev)...")
+    print("Launching Frontend (npm run dev)...")
     frontend_process = subprocess.Popen(
         [npm_cmd, "run", "dev"],
         cwd=frontend_dir,
@@ -59,8 +59,8 @@ def start_aurasnap():
 
     # 3. Wait and Open Browser
     time.sleep(4)
-    print("\n✅ Services are initializing.")
-    print("🌍 Opening: http://localhost:5173")
+    print("\nServices are initializing.")
+    print("Opening: http://localhost:5173")
     webbrowser.open("http://localhost:5173")
 
     print("\nPress Ctrl+C to stop both services.")
@@ -68,14 +68,14 @@ def start_aurasnap():
     try:
         while True:
             if backend_process.poll() is not None:
-                print("❌ Backend process terminated.")
+                print("Backend process terminated.")
                 break
             if frontend_process.poll() is not None:
-                print("❌ Frontend process terminated.")
+                print("Frontend process terminated.")
                 break
             time.sleep(1)
     except KeyboardInterrupt:
-        print("\n🛑 Stopping AuraSnap...")
+        print("\nStopping AuraSnap...")
         backend_process.terminate()
         frontend_process.terminate()
         print("Done.")

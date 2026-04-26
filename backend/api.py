@@ -11,12 +11,10 @@ import tkinter as tk
 from tkinter import filedialog
 
 # ── Import your existing logic ──────────────────────────────────────────────
-import sys
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import Train, Sort, whatsapp, cleanup
+from core import Train, Sort, whatsapp, cleanup
 
-BASIC_JSON = os.path.join(os.path.dirname(__file__), "Basic.json")
-EVENTS_JSON = os.path.join(os.path.dirname(__file__), "Events.json")
+BASIC_JSON = os.path.join(os.path.dirname(__file__), "data", "Basic.json")
+EVENTS_JSON = os.path.join(os.path.dirname(__file__), "data", "Events.json")
 
 app = FastAPI(title="AuraSnap API", version="2.0.0")
 
@@ -194,7 +192,7 @@ def save_settings(s: SettingsModel):
 @app.post("/watermark/preview")
 def watermark_preview(wm: WatermarkModel):
     """Returns a base64 PNG of the watermarked sample image."""
-    sample_path = os.path.join(os.path.dirname(__file__), "Sample photo.png")
+    sample_path = os.path.join(os.path.dirname(__file__), "assets", "Sample photo.png")
     try:
         if os.path.exists(sample_path):
             img = Image.open(sample_path).convert("RGBA")

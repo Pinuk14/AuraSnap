@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { apiFetch } from '../api';
-import type { Event } from '../api';
+import { apiFetch } from '../services/api';
+import type { Event } from '../services/api';
 import toast from 'react-hot-toast';
 import LiquidButton from '../components/LiquidButton';
 import LiquidInput from '../components/LiquidInput';

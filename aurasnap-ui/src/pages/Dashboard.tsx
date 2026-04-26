@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
-import { apiFetch } from '../api';
-import type { Event } from '../api';
+import { apiFetch } from '../services/api';
+import type { Event } from '../services/api';
 
 const statItems = (events: Event[]) => [
   { label: 'Total Events', value: events.length, icon: '📅' },
