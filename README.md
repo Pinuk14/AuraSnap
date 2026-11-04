@@ -112,7 +112,6 @@ GPU acceleration significantly improves:
 - **[Rishi Vartak](https://github.com/RishiVartak6)**
 
 ---
-
 ## 🏫 Academic Info
 - **Institution**: Vidyavardhini’s College of Engineering & Technology
 - **Department**: Computer Engineering
