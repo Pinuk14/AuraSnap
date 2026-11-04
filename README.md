@@ -10,7 +10,6 @@
 ![Platform](https://img.shields.io/badge/Platform-Windows%2011-blue)
 ![Status](https://img.shields.io/badge/Project-Academic-success)
 
----
 
 ## 📖 Overview
 
@@ -18,7 +17,6 @@
 
 Introduces a state-of-the-art **Liquid Glass** interface built on a **React + Python Sidecar** architecture, offering a premium, fluid experience for professional studios.
 
----
 
 ## ✨ Key Features
 
